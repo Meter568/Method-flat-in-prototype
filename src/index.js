@@ -1,7 +1,7 @@
-function MyArray(...items) {
+function MyArray(...args) {
     this.length = 0;
-    for (let i = 0; i < items.length; i++) {
-        this[i] = items[i];
+    for (let i = 0; i < args.length; i++) {
+        this[i] = args[i];
         this.length++;
     }
 }
@@ -11,7 +11,7 @@ MyArray.prototype.push = function (...items) {
         this[this.length] = items[i];
         this.length++;
     }
-    return this;
+    return this.length;
 };
 
 MyArray.prototype.slice = function (start = 0, end = this.length) {
