@@ -6,6 +6,12 @@ function MyArray(...args) {
     }
 }
 
+MyArray.prototype[Symbol.iterator] = function* () {
+    for(let i = 0; i < this.length; i++) {
+        yield this[i];
+    }
+}
+
 MyArray.prototype.push = function (...items) {
     for (let i = 0; i < items.length; i++) {
         this[this.length] = items[i];
@@ -24,17 +30,26 @@ MyArray.prototype.slice = function (start = 0, end = this.length) {
 
 MyArray.prototype.reduce = function (callbackfn, initialValue) {
     let result;
-    if (initialValue) {
+    let startIndex;
+    let nextIndex;
+
+    if (initialValue !== undefined) {
         result = initialValue;
-        for (let i = 0; i < this.length; i++) {
-            result = callbackfn(result, this[i], i, this);
-        }
+        endIndex = this.length;
+        nextIndex = 0;
     } else {
-        result = this[0];
-        for (let i = 0; i < this.length - 1; i++) {
-            result = callbackfn(result, this[i + 1], i, this);
+        if (this.length === 0) {
+            return "Reduce of empty array with no initial value";
         }
+        result = this[0];
+        endIndex = this.length - 1;
+        nextIndex = 1
     }
+
+    for(let i = 0; i < endIndex; i++) {
+        result = callbackfn(result, this[i + nextIndex], i, this);
+    }
+
     return result;
 };
 
@@ -44,7 +59,7 @@ MyArray.prototype.flat = function (depth = 1) {
     }
 
     return this.reduce((accumulator, currentValue) => {
-        if (Array.isArray(currentValue) && depth > 0) {
+        if (currentValue instanceof MyArray && depth > 0) {
             accumulator.push(...currentValue.flat(depth - 1));
         } else {
             accumulator.push(currentValue);
@@ -53,6 +68,7 @@ MyArray.prototype.flat = function (depth = 1) {
     }, new MyArray());
 };
 
-const myarr = new MyArray(10, 20, [30, [40, [50]]]);
-const resultFlat = myarr.flat();
+const myarr = new MyArray(10, 20, new MyArray(30, new MyArray(40, new MyArray(50))));
+console.log(myarr)
+const resultFlat = myarr.flat(1);
 console.log(resultFlat);
