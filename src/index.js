@@ -60,6 +60,28 @@ function MyArrayProto() {
         return result;
     };
 
+    this.reduceRight = function (callbackfn, initialValue) {
+        let result;
+        let startIndex;
+
+        if (initialValue !== undefined) {
+            result = initialValue;
+            startIndex = this.length - 1;
+        } else {
+            if (this.length === 0) {
+                return "Reduce of empty array with no initial value";
+            }
+            result = this[this.length - 1];
+            startIndex = this.length - 2;
+        }
+
+        for (let i = startIndex; i >= 0; i--) {
+            result = callbackfn(result, this[i], i, this);
+        }
+
+        return result;
+    };
+
     this.flat = function (depth = 1) {
         if (depth <= 0) {
             return this.slice();
@@ -78,8 +100,13 @@ function MyArrayProto() {
 
 MyArray.prototype = new MyArrayProto();
 
-const myArr = new MyArray(10, 20, new MyArray(30, new MyArray(40, new MyArray(50))));
-console.log(myArr);
+const myArr1 = new MyArray(10, 20, 30);
 
-const resultFlat = myArr.flat(2);
+const resultRightReduce = myArr1.reduceRight((acc, curr) => acc + curr);
+console.log(resultRightReduce);
+
+const myArr2 = new MyArray(10, 20, new MyArray(30, new MyArray(40, new MyArray(50))));
+console.log(myArr2);
+
+const resultFlat = myArr2.flat(2);
 console.log(resultFlat);
